@@ -5,16 +5,24 @@ import { AppComponent } from './app.component';
 import { NewTaskComponent } from './views/new-task/new-task.component';
 import { TasksListComponent } from './views/tasks-list/tasks-list.component';
 import { TaskProgressComponent } from './views/task-progress/task-progress.component';
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { FormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
     NewTaskComponent,
     TasksListComponent,
-    TaskProgressComponent
+    TaskProgressComponent,
+
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

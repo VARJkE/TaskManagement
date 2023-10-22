@@ -2,17 +2,25 @@
     <div class="tag-progress">
       <h2>Task Progress</h2>
       <div class="tag-progress">
-        <p>Copywriting <span>3/8</span></p>
-        <progress class="progress progress--copyright" max="8" value="3"> 3 </progress>
+        <p>To Do <span>{{ getTasks(1).length }}</span></p>
+        <progress class="progress progress__todo" [max]="tasks.length" [value]="getTasks(1).length"> {{ getTasks(1).length }} </progress>
       </div>
       <div class="tag-progress">
-        <p>Illustration <span>6/10</span></p>
-        <progress class="progress progress--illustration" max="10" value="6"> 6 </progress>
+        <p>In Progress <span>{{ getTasks(2).length }}</span></p>
+        <progress class="progress progress__inprogress" [max]="tasks.length" [value]="getTasks(2).length"> {{ getTasks(2).length }} </progress>
       </div>
       <div class="tag-progress">
-        <p>UI Design <span>2/7</span></p>
-        <progress class="progress progress--design" max="7" value="2"> 2 </progress>
+        <p>Testing <span>{{ getTasks(3).length }}</span></p>
+        <progress class="progress progress__testing" [max]="tasks.length" [value]="getTasks(3).length"> {{ getTasks(3).length }} </progress>
       </div>
+      <div class="tag-progress">
+        <p>Done <span>{{ getTasks(4).length }}</span></p>
+        <progress class="progress progress__done" [max]="tasks.length" [value]="getTasks(4).length"> {{ getTasks(4).length }} </progress>
+      </div>
+      <div class="tag-progress">
+        <p>All <span>{{ tasks.length }}</span></p>
+      </div>
+
     </div>
     
   </aside>
