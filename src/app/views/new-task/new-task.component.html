@@ -3,73 +3,70 @@
   <div class="project-participants">
     <button class="project-participants__add" (click)="showDialog()">Add Task</button>
     <ng-container #vc></ng-container>
-        <ng-template #modal_1>
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myModalLabel">Add new Task</h4>
-                        </div>
-                        <div class="modal-body"> 
-                            <div class="form__group field">
-                                <input type="text" class="form__field" placeholder="Name" name="name" id='name' required 
-                                [(ngModel)]="taskTitle">
-                                <label for="name" class="form__label">Task title</label>
-                              </div>
-                              <div class="form__group field">
-                                <input type="text" class="form__field" placeholder="Name" name="name" id='name' required 
-                                [(ngModel)]="taskDesc">
-                                <label for="name" class="form__label">Task description</label>
-                              </div>
-                              <div class="form__group field">
-                                <select 
-                                [(ngModel)]="selectedPriority" class="form__field" id="priority">
-                                    <option *ngFor="let priority of taskPriorities" [value]="priority.id" >
-                                        {{ priority.title }}
-                                     </option>
-                                </select> 
-                                <label for="priority" class="form__label">Select priority</label>
-                              </div>
-                              <div class="form__group field">
-                                <select 
-                                [(ngModel)]="selectedStatus" class="form__field" id="status">
-                                    <option *ngFor="let status of taskStatus" [value]="status.id" >
-                                        {{ status.title }}
-                                     </option>
-                                </select>
-                                <label for="status" class="form__label">Select status</label>
-                              </div>
+    <ng-template #modal_1>
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">Add new Task</h4>
+            </div>
+            <div class="modal-body">
 
-                              <div class="form__group field">
-                                <select 
-                                [(ngModel)]="selectedUser" class="form__field" id="user">
-                                    <option *ngFor="let user of taskAssignTo" [value]="user.id" >
-                                        {{ user.userName }}
-                                     </option>
-                                </select>
-                                <label for="user" class="form__label">Select user</label>
-                              </div>
-                              
-                              <div class="form__group field">
-                                <input type="date" class="form__field" placeholder="Date" name="name" id='date' 
-                                [(ngModel)]="taskDate">
-                                <label for="date" class="form__label">Date</label>
-                              </div>
-                         </div>
-
-                        <div class="modal-footer"> 
-                            <button type="button" class="btn btn-default" (click)="addNewTask()">Add task</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" (click)="closeDialog()">Close </button> 
-                        </div>
-                    </div>
+              <form [formGroup]="taskAddForm" (ngSubmit)="addNewTask()">
+                <div class="form__group field">
+                  <input type="text" id="title" class="form__field" formControlName="taskTitle">
+                  <label for="title" class="form__label">Task title</label>
                 </div>
-            </div>   
-        </ng-template>
+                <div class="form__group field">
+                  <input type="text" id="description" class="form__field" formControlName="taskDesc">
+                  <label for="description" class="form__label">Task description</label>
+                </div>
+                <div class="form__group field">
+
+                  <select id="priority" class="form__field" formControlName="taskPriorities">
+                    <option *ngFor="let priority of priorities" [value]="priority.id">
+                      {{ priority.title }}
+                    </option>
+                  </select>
+                  <label for="priority" class="form__label">Select priority</label>
+                </div>
+                <div class="form__group field">
+                  <select class="form__field" id="status" formControlName="taskStatus">
+                    <option *ngFor="let status of statuses" [value]="status.id">
+                      {{ status.title }}
+                    </option>
+                  </select>
+                  <label for="status" class="form__label">Select status</label>
+                </div>
+                <div class="form__group field">
+                  <select class="form__field" id="user" formControlName="taskAssignTo">
+                    <option *ngFor="let user of users" [value]="user.id">
+                      {{ user.userName }}
+                    </option>
+                  </select>
+                  <label for="user" class="form__label">Select user</label>
+                </div>
+                <div class="form__group field">
+                  <input type="date" class="form__field" placeholder="Date" id='date' formControlName="taskDate">
+                  <label for="date" class="form__label">Date</label>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-default" [disabled]="taskAddForm.invalid">Add Task</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal"
+                    (click)="closeDialog()">Close</button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>
-
-        
-      
-           
-
-
