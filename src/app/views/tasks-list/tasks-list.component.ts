@@ -1,6 +1,9 @@
-import { Component, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Pipe, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Priority } from 'src/app/classes/Priority';
 import { Status } from 'src/app/classes/Status';
 import { Task } from 'src/app/classes/Task';
+import { User } from 'src/app/classes/User';
 import { DataHandlerService } from 'src/app/service/data-handler.service';
 
 @Component({
@@ -13,22 +16,20 @@ export class TasksListComponent {
   @ViewChild('vc', { read: ViewContainerRef }) vc!: ViewContainerRef;
 
   taskId: number = 0;
-  taskTitle: string = '';
-  taskDesc: string = '';
-  taskPriorities = this.dataHandler.priorities;
-  taskAssignTo = this.dataHandler.users;
-  taskStatus = this.dataHandler.statuses;
-  taskDate: Date = new Date();
-  selectedPriority: number = 0;
-  selectedUser: number = 0;
-  selectedStatus: number = 0
   indexOfTask: number = 0;
+
+  taskEditForm!: FormGroup;
+
+  priorities: Priority[] = this.dataHandler.priorities;
+  users: User[] = this.dataHandler.users;
+  statuses: Status[] = this.dataHandler.statuses;
+
   backdrop: any;
 
   showDialog(taskId: number) {
-   
+
     let view = this.modal_1.createEmbeddedView(null);
-    
+
     this.vc.insert(view);
     this.modal_1.elementRef.nativeElement.previousElementSibling.classList.remove('fade');
     this.modal_1.elementRef.nativeElement.previousElementSibling.classList.add('modal-open');
@@ -38,26 +39,27 @@ export class TasksListComponent {
     document.body.appendChild(this.backdrop)
     this.indexOfTask = this.getTaskIndexById(taskId);
     this.taskId = taskId;
-    this.taskTitle = this.dataHandler.tasks[this.indexOfTask].title;
-    this.taskDesc = this.dataHandler.tasks[this.indexOfTask].desc;
-    this.selectedPriority = this.dataHandler.tasks[this.indexOfTask].priority.id;
-    this.selectedStatus = this.dataHandler.tasks[this.indexOfTask].status.id;
-    this.selectedUser = this.dataHandler.tasks[this.indexOfTask].assignTo.id;
-    
+
+    this.taskEditForm = this.formBuilder.group(
+      {
+        taskTitle: [this.dataHandler.tasks[this.indexOfTask].title, Validators.required],
+        taskDesc: [this.dataHandler.tasks[this.indexOfTask].desc, Validators.required],
+        taskPriorities: [this.dataHandler.tasks[this.indexOfTask].priority.id, Validators.required],
+        taskAssignTo: [this.dataHandler.tasks[this.indexOfTask].assignTo.id, Validators.required],
+        taskStatus: [this.dataHandler.tasks[this.indexOfTask].status.id, Validators.required],
+        taskDate: [this.dataHandler.tasks[this.indexOfTask].date, Validators.required]
+      })
+
   }
 
   closeDialog() {
     this.vc.clear()
     document.body.removeChild(this.backdrop)
-    this.resetForm();
   }
 
-  constructor(private dataHandler: DataHandlerService) {
+  constructor(private dataHandler: DataHandlerService, private formBuilder: FormBuilder) {
 
   }
-
-  statuses: Status[] = this.dataHandler.statuses;
-
 
   ngOnInit() {
 
@@ -68,19 +70,20 @@ export class TasksListComponent {
   }
 
   saveEditedTask() {
-    
+
     this.dataHandler.tasks[this.getTaskIndexById(this.taskId)] =
     {
       id: this.taskId,
-      title: this.taskTitle,
-      desc: this.taskDesc,
-      date: this.taskDate,
-      priority: this.dataHandler.priorities[this.selectedPriority - 1],
-      assignTo: this.dataHandler.users[this.selectedUser - 1],
-      status: this.dataHandler.statuses[this.selectedStatus - 1],
+      title: this.taskEditForm.value.taskTitle,
+      desc: this.taskEditForm.value.taskDesc,
+      date: this.taskEditForm.value.taskDate,
+      priority: this.dataHandler.priorities[this.taskEditForm.value.taskPriorities - 1],
+      assignTo: this.dataHandler.users[this.taskEditForm.value.taskAssignTo - 1],
+      status: this.dataHandler.statuses[this.taskEditForm.value.taskStatus - 1],
     };
 
     this.closeDialog();
+    this.taskEditForm.reset();
 
   }
 
@@ -89,14 +92,6 @@ export class TasksListComponent {
     this.dataHandler.tasks.splice(indexById, 1);
   }
 
-  resetForm(): void {
-    this.taskTitle = '';
-    this.taskDesc = '';
-    this.taskDate = new Date();
-    this.selectedPriority = 0;
-    this.selectedUser = 0;
-    this.selectedStatus = 0
-  }
 
   getTaskIndexById(taskId: number): number {
     return this.dataHandler.tasks.findIndex(index => index.id === taskId);

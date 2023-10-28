@@ -1,4 +1,5 @@
-import { Component, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Data } from 'src/app/data/Data';
 import { DataHandlerService } from 'src/app/service/data-handler.service';
 
@@ -7,19 +8,15 @@ import { DataHandlerService } from 'src/app/service/data-handler.service';
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.css']
 })
-export class NewTaskComponent {
+export class NewTaskComponent implements OnInit {
   @ViewChild('modal_1') modal_1!: TemplateRef<any>;
   @ViewChild('vc', { read: ViewContainerRef }) vc!: ViewContainerRef;
 
-  taskTitle: string = '';
-  taskDesc: string = '';
-  taskPriorities = this.dataHandler.priorities;
-  taskAssignTo = this.dataHandler.users;
-  taskStatus = this.dataHandler.statuses;
-  taskDate: Date = new Date();
-  selectedPriority: number = 0;
-  selectedUser: number = 0;
-  selectedStatus: number = 0
+  taskAddForm!: FormGroup;
+
+  priorities = this.dataHandler.priorities;
+  users = this.dataHandler.users;
+  statuses = this.dataHandler.statuses;
 
   backdrop: any;
 
@@ -32,7 +29,6 @@ export class NewTaskComponent {
     this.backdrop = document.createElement('DIV')
     this.backdrop.className = 'modal-backdrop';
     document.body.appendChild(this.backdrop)
-
   }
 
   closeDialog() {
@@ -40,33 +36,37 @@ export class NewTaskComponent {
     document.body.removeChild(this.backdrop)
   }
 
-  constructor(private dataHandler: DataHandlerService) {
+  constructor(private dataHandler: DataHandlerService, private formBuilder: FormBuilder) {
 
   }
+
+  ngOnInit(): void {
+    this.taskAddForm = this.formBuilder.group(
+      {
+        taskTitle: ['', Validators.required],
+        taskDesc: ['', Validators.required],
+        taskPriorities: ['', Validators.required],
+        taskAssignTo: ['', Validators.required],
+        taskStatus: ['', Validators.required],
+        taskDate: ['', Validators.required]
+      })
+  }
+
 
   addNewTask(): void {
     this.dataHandler.addTask(
       {
         id: Data.tasks.length + 1,
-        title: this.taskTitle,
-        desc: this.taskDesc,
-        priority: this.dataHandler.priorities[this.selectedPriority - 1],
-        assignTo: this.dataHandler.users[this.selectedUser - 1],
-        status: this.dataHandler.statuses[this.selectedStatus - 1],
-        date: this.taskDate
-
+        title: this.taskAddForm.value.taskTitle,
+        desc: this.taskAddForm.value.taskDesc,
+        priority: this.dataHandler.priorities[this.taskAddForm.value.taskPriorities - 1],
+        assignTo: this.dataHandler.users[this.taskAddForm.value.taskAssignTo - 1],
+        status: this.dataHandler.statuses[this.taskAddForm.value.taskStatus - 1],
+        date: this.taskAddForm.value.taskDate
       }),
       this.closeDialog();
-    this.resetForm();
+    this.taskAddForm.reset();
 
   }
 
-  resetForm(): void {
-    this.taskTitle = '';
-    this.taskDesc = '';
-    this.taskDate = new Date();
-    this.selectedPriority = 0;
-    this.selectedUser = 0;
-    this.selectedStatus = 0
-  }
 }
